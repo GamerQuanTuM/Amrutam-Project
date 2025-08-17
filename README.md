@@ -93,7 +93,7 @@ A full-stack healthcare platform connecting patients with certified Ayurvedic pr
 
 6. **Access the Application**
    - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
+   - Backend API: http://localhost:4000
 
 ## 📱 Application Flow
 
@@ -128,20 +128,3 @@ The backend provides RESTful APIs for:
 - Doctor management (`/doctor`)
 - Appointment booking (`/appointment`)
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- Built with modern web technologies and best practices
-- Inspired by the need for accessible healthcare solutions
-- UI/UX designed for optimal user experience across devices
