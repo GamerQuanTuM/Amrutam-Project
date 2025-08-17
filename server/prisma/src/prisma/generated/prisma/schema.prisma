@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./src/prisma/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  DOCTOR
+  ADMIN
+}
+
+enum Mode {
+  ONLINE
+  IN_PERSON
+}
+
+enum AppointmentStatus {
+  BOOKED
+  COMPLETED
+  CANCELLED
+}
+
+enum Specialization {
+  SKIN_CARE
+  DIGESTIVE_ISSUES
+  RESPIRATORY_CARE
+  JOINT_PAIN
+  MENTAL_WELLNESS
+  GENERAL_CONSULTATION
+  WOMENS_HEALTH
+  PEDIATRIC_CARE
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  password     String
+  role         Role           @default(USER)
+  doctor       Doctor?
+  appointments Appointment[]  @relation("PatientAppointments")
+  lockedSlots  Availability[] @relation("LockedSlots")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([email])
+}
+
+model Doctor {
+  id              String         @id @default(uuid())
+  userId          String         @unique
+  specialization  Specialization
+  mode            Mode
+  bio             String?
+  experience      Int? // Years of experience
+  consultationFee Decimal? // Fee for consultation
+  user            User           @relation(fields: [userId], references: [id])
+  availability    Availability[]
+  appointments    Appointment[]  @relation("DoctorAppointments")
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([specialization])
+  @@index([mode])
+  @@index([specialization, mode])
+}
+
+model Availability {
+  id        String   @id @default(uuid())
+  doctorId  String
+  startTime DateTime
+  endTime   DateTime
+  isBooked  Boolean  @default(false)
+
+  // Slot locking mechanism
+  lockedBy   String? // User ID who locked the slot
+  lockedAt   DateTime? // When the slot was locked
+  lockExpiry DateTime? // When the lock expires (5 minutes from lockedAt)
+
+  doctor       Doctor       @relation(fields: [doctorId], references: [id])
+  lockedByUser User?        @relation("LockedSlots", fields: [lockedBy], references: [id])
+  appointment  Appointment?
+
+  @@index([doctorId])
+  @@index([startTime])
+  @@index([doctorId, startTime])
+  @@index([isBooked])
+  @@index([lockExpiry])
+}
+
+model Appointment {
+  id          String            @id @default(uuid())
+  patientId   String
+  doctorId    String
+  slotId      String            @unique
+  status      AppointmentStatus
+  confirmed   Boolean           @default(false)
+  bookedAt    DateTime          @default(now())
+  confirmedAt DateTime? // When the appointment was confirmed
+
+  // For rescheduling tracking
+  originalSlotId  String?
+  rescheduleCount Int     @default(0) // Track how many times rescheduled
+
+  patient   User         @relation("PatientAppointments", fields: [patientId], references: [id])
+  doctor    Doctor       @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  slot      Availability @relation(fields: [slotId], references: [id])
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([patientId])
+  @@index([doctorId])
+  @@index([status])
+  @@index([bookedAt])
+}
