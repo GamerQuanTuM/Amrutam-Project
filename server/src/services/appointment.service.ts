@@ -124,8 +124,11 @@ class AppointmentService {
     public async cancel(appointmentId: string, userId: string) {
         const appointment = await this.checkAppointment(appointmentId, userId)
 
-        await prisma.$transaction([
+        if (appointment.confirmedAt && (appointment.confirmedAt < new Date(Date.now() - 24 * 60 * 60 * 100))) {
+            throw new BadRequestException("This appointment was confirmed more than 24 hours ago and can no longer be cancelled.");
+        }
 
+        await prisma.$transaction([
             prisma.appointment.update({
                 where: { id: appointmentId },
                 data: {
@@ -153,6 +156,10 @@ class AppointmentService {
 
         if (appointment.rescheduleCount >= 3) {
             throw new BadRequestException("You have reached the maximum number of reschedules");
+        }
+
+        if (appointment.confirmedAt && (appointment.confirmedAt < new Date(Date.now() - 24 * 60 * 60 * 100))) {
+            throw new BadRequestException("This appointment was confirmed more than 24 hours ago and can no longer be rescheduled.");
         }
 
         const newSlot = await prisma.availability.findUnique({

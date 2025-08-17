@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { axiosInstance } from "@/lib/axiosInstance";
+import { toast } from "sonner";
 
 interface UserSignupFormProps {
   onToggleMode: () => void;
@@ -62,8 +63,8 @@ export default function UserSignupForm({ onToggleMode }: UserSignupFormProps) {
         password,
         name: fullName,
       })
-      .then((response) => {
-        console.log(response.data.message);
+      .then(() => {
+        toast.success("User created. Please login to access the dashboard.");
       })
       .catch((error) => {
         console.error(error);

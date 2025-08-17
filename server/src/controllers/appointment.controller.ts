@@ -105,6 +105,7 @@ class AppointmentController {
                     data: response,
                 });
             } catch (error) {
+                console.log(error)
                 throw new InternalServerErrorException("Something went wrong")
             }
 
