@@ -64,9 +64,14 @@ router.get("/user-appointments",
 router.get("/available-slots",
     authenticated,
     validateRequest({
-        query:availableSlotsRequest
+        query: availableSlotsRequest
     }),
     appointmentController.getAvailableSlots()
+)
+
+router.get("/user-appointments-count",
+    authenticated,
+    appointmentController.getUserAppointmentCount()
 )
 
 

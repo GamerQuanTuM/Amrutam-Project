@@ -147,6 +147,7 @@ The **Appointment Service** is the heart of the booking system, managing the com
 | `getAvailableSlots()` | Get paginated available slots | Redis caching (5min TTL) |
 | `getAppointmentsOfUser()` | User's appointment history | Includes doctor details |
 | `getBookingsOfUser()` | User's temporary bookings | Locked slots not yet confirmed |
+| `userAppointmentCount()` | User's appointments count | Keep track of status |
 
 #### Business Rules:
 - **Lock Expiry**: 5 minutes from booking
@@ -275,6 +276,7 @@ Manages doctor discovery and availability with intelligent filtering.
 - `GET /api/v1/appointment/available-slots` - Available slots
 - `GET /api/v1/appointment/user-bookings` - User bookings
 - `GET /api/v1/appointment/user-appointments` - User appointments
+- `GET /api/v1/appointment//user-appointments-count` - User appointments count
 
 ## 🧪 Development Commands
 

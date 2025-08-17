@@ -19,6 +19,16 @@ interface AppointmentApiResponse {
     };
   };
 }
+interface UserAppointmentApiResponse {
+  data: {
+    data: {
+      bookedAppointments: number;
+      completedAppointments: number;
+      cancelledAppointments: number;
+      totalAppointments: number;
+    };
+  };
+}
 
 const Dashboard = async () => {
   const { data: { data: { bookings } } } = (await serverAxiosInstance.get(
@@ -31,10 +41,15 @@ const Dashboard = async () => {
   )) as AppointmentApiResponse;
 
 
+  const { data: { data: healthStats } } = (await serverAxiosInstance.get(
+    "/appointment/user-appointments-count"
+  )) as UserAppointmentApiResponse;
+
+
   const session = await getServerSession();
 
   return (
-    <BookingClientWrapper bookings={bookings} appointments={appointments} session={session} />
+    <BookingClientWrapper bookings={bookings} appointments={appointments} session={session} healthStats={healthStats} />
   )
 }
 

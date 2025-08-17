@@ -368,6 +368,27 @@ class AppointmentService {
         console.log('Cached Available Slots query result');
         return result
     }
+
+    public async userAppointmentCount(userId: string) {
+        const counts = await prisma.appointment.groupBy({
+            by: ["status"],
+            _count: { _all: true },
+            where: { patientId: userId },
+        });
+
+        const bookedAppointments = counts.find(c => c.status === "BOOKED")?._count._all ?? 0;
+        const completedAppointments = counts.find(c => c.status === "COMPLETED")?._count._all ?? 0;
+        const cancelledAppointments = counts.find(c => c.status === "CANCELLED")?._count._all ?? 0;
+
+        const totalAppointments = bookedAppointments + completedAppointments + cancelledAppointments;
+
+        return {
+            bookedAppointments,
+            completedAppointments,
+            cancelledAppointments,
+            totalAppointments
+        }
+    }
 }
 
 export default AppointmentService;

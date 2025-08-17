@@ -16,18 +16,17 @@ type Props = {
     bookings: BookingResponse[];
     appointments: AppointmentResponse[];
     session: User | null;
+    healthStats: {
+        bookedAppointments: number;
+        completedAppointments: number;
+        cancelledAppointments: number;
+        totalAppointments: number;
+    }
 }
 
-function BookingClientWrapper({ bookings, appointments, session }: Props) {
+function BookingClientWrapper({ bookings, appointments, session, healthStats }: Props) {
 
     const { isModalOpen, closeModal, selectedDoctor, appointmentId } = useReschedule();
-
-    const healthStats = {
-        totalAppointments: 12,
-        completedAppointments: 8,
-        UpComingBookings: 2,
-        cancelledAppointments: 2,
-    };
 
     const cardContent = [
         {
@@ -41,8 +40,8 @@ function BookingClientWrapper({ bookings, appointments, session }: Props) {
             color: "text-green-600",
         },
         {
-            title: "Upcoming",
-            value: healthStats.UpComingBookings,
+            title: "Booked",
+            value: healthStats.bookedAppointments,
             color: "text-blue-600",
         },
         {

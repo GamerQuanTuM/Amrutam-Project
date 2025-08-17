@@ -10,6 +10,7 @@ import { RescheduleRequestType, RescheduleResponseType } from "../schemas/appoin
 import { UserAppointmentsResponseType } from "../schemas/appointment/userAppointments";
 import { AvailableSlotsRequestType, AvailableSlotsResponseType } from "../schemas/appointment/availableSlots";
 import { UserBookingsResponseType } from "../schemas/appointment/userBookings";
+import { UserAppointmentResponseType } from "../schemas/appointment/userAppointmentCount";
 
 class AppointmentController {
     private appointmentService: AppointmentService
@@ -155,6 +156,21 @@ class AppointmentController {
                 throw new InternalServerErrorException("Something went wrong")
             }
 
+        }
+    }
+
+    public getUserAppointmentCount(): AuthenticatedHandler<any, any, any,UserAppointmentResponseType> {
+        return async (req, res) => {
+            try {
+                const userId = this.checkUserId(req.user)
+                const response = await this.appointmentService.userAppointmentCount(userId);
+                res.status(200).json({
+                    message: "Appointments of user fetched successfully",
+                    data: response,
+                });
+            } catch (err) {
+                throw new InternalServerErrorException("Something went wrong")
+            }
         }
     }
 
