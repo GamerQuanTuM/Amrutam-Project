@@ -11,6 +11,7 @@ import { User } from "@/types/user";
 import BookAppointmentModal from "./bookappointmentmodal";
 import { axiosInstance } from "@/lib/axiosInstance";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type Props = {
     bookings: BookingResponse[];
@@ -25,6 +26,8 @@ type Props = {
 }
 
 function BookingClientWrapper({ bookings, appointments, session, healthStats }: Props) {
+
+    const router = useRouter()
 
     const { isModalOpen, closeModal, selectedDoctor, appointmentId } = useReschedule();
 
@@ -76,7 +79,7 @@ function BookingClientWrapper({ bookings, appointments, session, healthStats }: 
             if (data) {
                 closeModal()
                 toast.success(data.message)
-                window.location.reload()
+                router.refresh()
             }
         } catch (error) {
             console.log(error)

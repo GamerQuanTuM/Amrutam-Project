@@ -2,6 +2,7 @@
 import React from "react";
 import { toast } from "sonner";
 import { axiosInstance } from "@/lib/axiosInstance";
+import { useRouter } from "next/navigation";
 
 type Props = {
   slotId: string,
@@ -9,6 +10,8 @@ type Props = {
 }
 
 const UpComingBookingButton = ({ slotId, doctorId }: Props) => {
+
+  const router = useRouter()
 
   const onConfirmSlot = async () => {
     const response = await axiosInstance.post("/appointment/confirm", {
@@ -18,7 +21,7 @@ const UpComingBookingButton = ({ slotId, doctorId }: Props) => {
 
     if (response.data.message) {
       toast.success(response.data.message)
-      window.location.reload()
+      router.refresh()
     }
   }
 

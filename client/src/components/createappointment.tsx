@@ -1,13 +1,16 @@
 "use client"
-import React, { useState } from 'react'
+import React from 'react'
 import { toast } from 'sonner'
 import { axiosInstance } from '@/lib/axiosInstance'
 import { Doctor } from '@/types/findDoctor'
 import { useReschedule } from '@/hooks/useReschedule'
+import { useRouter } from 'next/navigation'
 
 const CreateAppointment = ({ appointmentId, status, doctor }: { appointmentId: string, status: "BOOKED" | "COMPLETED" | "CANCELLED", doctor: Doctor }) => {
 
     const { openModal:openRescheduleModal} = useReschedule()
+
+    const router = useRouter()
 
 
     const onCreateAppointment = async () => {
@@ -16,7 +19,7 @@ const CreateAppointment = ({ appointmentId, status, doctor }: { appointmentId: s
 
             if (response.data.message) {
                 toast.success(response.data.message)
-                window.location.reload()
+                router.refresh()
             }
         } catch (error) {
             toast.error("Error creating appointment")
@@ -32,7 +35,7 @@ const CreateAppointment = ({ appointmentId, status, doctor }: { appointmentId: s
 
             if (response.data.message) {
                 toast.success(response.data.message)
-                window.location.reload()
+                router.refresh()
             }
         } catch (error) {
             toast.error("Something went wrong")
